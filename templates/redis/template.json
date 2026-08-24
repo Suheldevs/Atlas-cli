@@ -1,0 +1,16 @@
+{
+  "name": "redis",
+  "version": "1.0.0",
+  "description": "A Redis client built on ioredis: env-driven config, a lazy connection with bounded retries, graceful shutdown, a ping health check, and typed get/set/del/wrap cache helpers.",
+  "dependencies": {
+    "ioredis": "^5.11.1"
+  },
+  "devDependencies": {},
+  "scripts": {},
+  "files": [],
+  "requires": {
+    "frameworks": [],
+    "language": "typescript",
+    "dependencies": {}
+  }
+}

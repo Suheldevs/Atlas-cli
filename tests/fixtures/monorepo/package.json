@@ -1,0 +1,8 @@
+{
+  "name": "monorepo-fixture",
+  "version": "1.0.0",
+  "private": true,
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}

@@ -1,0 +1,89 @@
+name: Feature request
+description: Propose a new generator, a new template, or a change to an existing one.
+title: '[feature] '
+labels: ['enhancement', 'needs-triage']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Atlas has one hard constraint, and it decides most requests: **generated code must keep
+        working after Atlas is uninstalled.** Nothing Atlas writes may import Atlas, and there is
+        no runtime to configure. A request that needs Atlas to stay in the loop is out of scope,
+        however useful it would be.
+
+        See [docs/architecture.md](https://github.com/suhel/atlas/blob/main/docs/architecture.md)
+        for what that rules in and out.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: >-
+        What are you doing by hand today, in what kind of project, and how often? Describe the
+        situation rather than the solution — the situation is what determines whether this is one
+        generator, several, or a flag on an existing one.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What Atlas should generate
+      description: >-
+        The files, roughly where they land, and what they contain. If you already have a
+        handwritten version in a project, that is the most useful thing you can attach — a
+        template is a complete implementation, so a real one beats a description.
+    validations:
+      required: true
+
+  - type: input
+    id: resembles
+    attributes:
+      label: Which existing generator or template is this closest to?
+      description: >-
+        Run `atlas list`. Naming the nearest existing thing tells us whether this is a new
+        generator, a new template inside one, or an option on one that already exists — and it is
+        also the file you would copy to build it.
+      placeholder: 'auth, or templates/logger'
+    validations:
+      required: true
+
+  - type: dropdown
+    id: plugin
+    attributes:
+      label: Could this be a third-party plugin instead?
+      description: >-
+        A package named `atlas-plugin-*` in a project's dependencies is discovered automatically
+        and its generators are indistinguishable from built-ins — same contract, same registry,
+        same `atlas list`, same shortcut alias. Most requests can ship that way, and that is a
+        feature of the architecture rather than a way of saying no: it means you can have it
+        today without waiting for us. Built-ins are reserved for things almost every project
+        wants. See
+        [docs/plugin-development.md](https://github.com/suhel/atlas/blob/main/docs/plugin-development.md).
+      options:
+        - 'Yes — and I would be willing to write it'
+        - 'Yes — but I would rather it shipped in the box'
+        - 'No — it needs something only Atlas itself can do'
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Which projects does this apply to?
+      description: >-
+        Framework, module system, database, package manager — anything that narrows it. A
+        generator that only makes sense for one framework declares that in `meta.frameworks` and
+        refuses everything else cleanly, so this is a real design input.
+      placeholder: 'Express 5, ESM, Prisma'
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
+      description: An existing library, a snippet, a different tool, doing nothing.
+    validations:
+      required: false

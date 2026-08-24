@@ -1,0 +1,13 @@
+{
+  "name": "express-cjs-fixture",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "express": "^4.21.2",
+    "prisma": "^6.1.0",
+    "@prisma/client": "^6.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}

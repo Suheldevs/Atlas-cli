@@ -1,0 +1,19 @@
+{
+  "name": "socket",
+  "version": "1.0.0",
+  "description": "Typed Socket.IO server for Express: JWT handshake authentication, a /chat namespace with room join, leave and broadcast, validated payloads, CORS from the environment, and a graceful close helper.",
+  "dependencies": {
+    "socket.io": "^4.8.3",
+    "jose": "^6.2.4"
+  },
+  "devDependencies": {},
+  "scripts": {},
+  "files": [],
+  "requires": {
+    "frameworks": ["express"],
+    "language": "typescript",
+    "dependencies": {
+      "express": "^5.0.0"
+    }
+  }
+}

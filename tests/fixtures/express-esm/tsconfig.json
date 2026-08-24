@@ -1,0 +1,12 @@
+{
+  // A real project's tsconfig, comments and all — which is exactly why the detector has to
+  // tolerate JSONC rather than assuming JSON.parse will succeed.
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "outDir": "dist"
+  },
+  "include": ["src"]
+}

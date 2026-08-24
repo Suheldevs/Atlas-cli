@@ -1,0 +1,13 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`atlas logger, end to end > produces a stable set of files 1`] = `
+[
+  "src/logger/errors.ts",
+  "src/logger/formats.ts",
+  "src/logger/http-logger.ts",
+  "src/logger/index.ts",
+  "src/logger/logger-config.ts",
+  "src/logger/logger.ts",
+  "src/logger/redact.ts",
+]
+`;

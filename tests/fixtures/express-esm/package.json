@@ -1,0 +1,17 @@
+{
+  "name": "express-esm-fixture",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "express": "^5.0.1",
+    "mongoose": "^8.9.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "logger",
+  "version": "1.0.0",
+  "description": "Production Winston logging: JSON to stdout in production, colourised lines in development, recursive redaction of sensitive fields, error and cause-chain serialisation, and Express request middleware.",
+  "dependencies": {
+    "winston": "^3.19.0"
+  },
+  "devDependencies": {},
+  "scripts": {},
+  "files": [],
+  "requires": {
+    "frameworks": [],
+    "language": "typescript",
+    "dependencies": {}
+  }
+}

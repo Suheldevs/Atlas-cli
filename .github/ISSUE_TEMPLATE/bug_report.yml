@@ -1,0 +1,132 @@
+name: Bug report
+description: Atlas generated the wrong thing, refused to run, or crashed.
+title: '[bug] '
+labels: ['bug', 'needs-triage']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        If Atlas printed an `ATLAS_nnnn` code, check
+        [docs/troubleshooting.md](https://github.com/suhel/atlas/blob/main/docs/troubleshooting.md)
+        first — every code is listed there with its cause and its fix.
+
+        **The single most useful thing you can include is the output of `atlas info`.** Most
+        reports about wrong output come down to one detector disagreeing with what the reporter
+        expected: Atlas decided the project was CommonJS, or flat-layout, or Fastify, and wrote
+        accordingly. That output settles it in one round trip instead of five.
+
+  - type: input
+    id: atlas-version
+    attributes:
+      label: Atlas version
+      description: Output of `atlas --version`.
+      placeholder: 0.1.0
+    validations:
+      required: true
+
+  - type: textarea
+    id: info
+    attributes:
+      label: '`atlas info` output'
+      description: Run `atlas info` in the project where the problem happened and paste all of it.
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: doctor
+    attributes:
+      label: '`atlas doctor` output'
+      description: Run `atlas doctor` and paste all of it.
+      render: text
+    validations:
+      required: true
+
+  - type: input
+    id: node-version
+    attributes:
+      label: Node version
+      description: Output of `node --version`. Atlas requires >= 22.13.0.
+      placeholder: v22.13.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Linux
+        - macOS
+        - Windows
+        - Windows (WSL)
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: package-manager
+    attributes:
+      label: Package manager
+      description: The one the target project uses, not the one you installed Atlas with.
+      options:
+        - npm
+        - pnpm
+        - yarn
+        - bun
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: command
+    attributes:
+      label: The exact command you ran
+      description: Verbatim, including every flag. Re-run it with `--verbose` if you can.
+      render: shell
+      placeholder: npx @suhel/atlas auth --database prisma --verbose
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+      description: What should Atlas have generated, or what should it have done?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: What actually happened
+      description: >-
+        The output, the error, or the generated files that were wrong. For wrong generated code,
+        paste the file and say which lines are wrong and why.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: fresh-project
+    attributes:
+      label: Does it reproduce on a fresh project?
+      description: >-
+        Create an empty project, install the framework, and run the same command. This separates
+        an Atlas bug from an interaction with something already in your repository, and it is the
+        difference between a fix this week and a fix after a long exchange.
+      options:
+        - 'Yes — reproduces on a fresh project'
+        - 'No — only in my existing project'
+        - Not tried yet
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else
+      description: >-
+        A link to a repository that reproduces it, relevant `tsconfig.json` or `package.json`
+        excerpts, an `atlas.config.ts` if you have one.
+    validations:
+      required: false

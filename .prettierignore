@@ -1,0 +1,17 @@
+dist
+coverage
+node_modules
+
+# templates/ is excluded because generated code is formatted with the target project's prettier config, not this repository's.
+templates
+
+# tests/fixtures/ are miniature projects used as detection input. Their formatting is
+# deliberately varied (JSONC comments, non-strict configs) and must survive untouched.
+tests/fixtures
+
+*.tgz
+CHANGELOG.md
+tests/.tmp
+pnpm-lock.yaml
+package-lock.json
+yarn.lock

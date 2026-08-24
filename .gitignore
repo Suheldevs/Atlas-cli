@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+coverage/
+
+# Tool caches
+.eslintcache
+*.tsbuildinfo
+.vitest/
+.tsup/
+
+# Packaged tarballs
+*.tgz
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editors
+.idea/
+*.swp
+
+# Test scratch space
+tests/.tmp/
+
+# Local Claude Code overrides (personal, never committed)
+.claude/settings.local.json

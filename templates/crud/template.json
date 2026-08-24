@@ -1,0 +1,18 @@
+{
+  "name": "crud",
+  "version": "1.0.0",
+  "description": "A typed CRUD resource for Express 5: model with Zod schemas, service over an in-memory store, controller with correct status codes, and a router with a bounded JSON body.",
+  "dependencies": {
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {},
+  "scripts": {},
+  "files": [],
+  "requires": {
+    "frameworks": ["express"],
+    "language": "typescript",
+    "dependencies": {
+      "express": "^5.0.0"
+    }
+  }
+}

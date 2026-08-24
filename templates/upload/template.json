@@ -1,0 +1,20 @@
+{
+  "name": "upload",
+  "version": "1.0.0",
+  "description": "Multer file uploads to disk with a size limit, a MIME allowlist, generated filenames and an error handler that maps multer failures to real status codes.",
+  "dependencies": {
+    "multer": "^2.2.0"
+  },
+  "devDependencies": {
+    "@types/multer": "^2.2.0"
+  },
+  "scripts": {},
+  "files": [],
+  "requires": {
+    "frameworks": ["express"],
+    "language": "typescript",
+    "dependencies": {
+      "express": "^5.0.0"
+    }
+  }
+}

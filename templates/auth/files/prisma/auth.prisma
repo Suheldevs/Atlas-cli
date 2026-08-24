@@ -1,0 +1,47 @@
+// Prisma models for the auth module.
+//
+// This is a FRAGMENT, not a schema. Atlas does not generate over an existing `schema.prisma`,
+// because that file is where your whole data model lives and overwriting it would be unforgivable.
+//
+// To adopt it, either paste these two models into your `schema.prisma`, or — if you use Prisma's
+// multi-file schema layout — move this file to `prisma/schema/auth.prisma`.
+//
+// Then:
+//   npx prisma generate
+//   npx prisma migrate dev --name add-auth
+//
+// The `datasource` and `generator` blocks are deliberately absent: yours already exist, and a
+// second one is a hard error.
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  // A plain String rather than a Prisma enum, so adding a role is a code change and not a
+  // migration. String also works on every provider — `String[]` is PostgreSQL-only, and would have
+  // made this schema fail to validate on MySQL or SQLite. The repository checks unknown values, so
+  // a stray row cannot grant access.
+  role         String   @default("user")
+  createdAt    DateTime @default(now())
+
+  refreshTokens RefreshToken[]
+}
+
+model RefreshToken {
+  // The token's `jti` claim. Unique because rotation identifies exactly one row to retire.
+  jti       String    @id
+  // Shared by every token descended from one login, so a replay can revoke the whole lineage.
+  family    String
+  userId    String
+  expiresAt DateTime
+  // Set once, when the token is rotated away or its family is revoked. Never overwritten — the
+  // timestamp is the record of when a credential was retired.
+  revokedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // `family` for reuse detection, `userId` for sign-out-everywhere, `expiresAt` for the sweep.
+  @@index([family])
+  @@index([userId])
+  @@index([expiresAt])
+}

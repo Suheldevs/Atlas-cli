@@ -1,0 +1,21 @@
+// Prisma schema. The CLI reads this file — and only this file — for `migrate` and `generate`.
+
+datasource db {
+  provider = "__DATABASE__"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// A starting point so `prisma migrate dev` has something to create. Delete it and add your own;
+// nothing in the generated code depends on it.
+//
+// Deliberately not called `User`: `atlas auth --database prisma` also defines a `User` model, and
+// two models of the same name is a schema validation error.
+model Example {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+}

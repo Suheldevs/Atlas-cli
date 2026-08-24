@@ -1,0 +1,54 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`atlas auth, end to end > produces a stable file set for mongoose 1`] = `
+[
+  "src/auth/config/auth-config.ts",
+  "src/auth/config/env-schema.ts",
+  "src/auth/domain/auth-errors.ts",
+  "src/auth/domain/tokens.ts",
+  "src/auth/domain/user.ts",
+  "src/auth/http/auth-controller.ts",
+  "src/auth/http/auth-routes.ts",
+  "src/auth/http/auth-validators.ts",
+  "src/auth/http/error-handler.ts",
+  "src/auth/http/require-auth.ts",
+  "src/auth/http/require-role.ts",
+  "src/auth/http/validate.ts",
+  "src/auth/index.ts",
+  "src/auth/repositories/mongoose-refresh-token-repository.ts",
+  "src/auth/repositories/mongoose-user-repository.ts",
+  "src/auth/repositories/refresh-token-repository.ts",
+  "src/auth/repositories/user-repository.ts",
+  "src/auth/security/bcrypt-hasher.ts",
+  "src/auth/security/password-hasher.ts",
+  "src/auth/security/token-service.ts",
+  "src/auth/services/auth-service.ts",
+]
+`;
+
+exports[`atlas auth, end to end > produces a stable file set for prisma 1`] = `
+[
+  "prisma/auth.prisma",
+  "src/auth/config/auth-config.ts",
+  "src/auth/config/env-schema.ts",
+  "src/auth/domain/auth-errors.ts",
+  "src/auth/domain/tokens.ts",
+  "src/auth/domain/user.ts",
+  "src/auth/http/auth-controller.ts",
+  "src/auth/http/auth-routes.ts",
+  "src/auth/http/auth-validators.ts",
+  "src/auth/http/error-handler.ts",
+  "src/auth/http/require-auth.ts",
+  "src/auth/http/require-role.ts",
+  "src/auth/http/validate.ts",
+  "src/auth/index.ts",
+  "src/auth/repositories/prisma-refresh-token-repository.ts",
+  "src/auth/repositories/prisma-user-repository.ts",
+  "src/auth/repositories/refresh-token-repository.ts",
+  "src/auth/repositories/user-repository.ts",
+  "src/auth/security/bcrypt-hasher.ts",
+  "src/auth/security/password-hasher.ts",
+  "src/auth/security/token-service.ts",
+  "src/auth/services/auth-service.ts",
+]
+`;

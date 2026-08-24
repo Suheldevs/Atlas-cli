@@ -1,0 +1,52 @@
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: '/'
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Etc/UTC
+    open-pull-requests-limit: 5
+    versioning-strategy: increase
+    labels: ['dependencies']
+    commit-message:
+      prefix: 'chore(deps)'
+      prefix-development: 'chore(deps-dev)'
+
+    # Grouped deliberately. One pull request per dev dependency is a dozen PRs a week that all
+    # say the same thing — the review either reads a green CI run or it reads nothing, and a
+    # dozen of them guarantees the latter. Runtime dependencies are grouped separately because
+    # they are the ones whose versions reach users' lockfiles.
+    groups:
+      runtime:
+        applies-to: version-updates
+        dependency-type: production
+        patterns: ['*']
+      development:
+        applies-to: version-updates
+        dependency-type: development
+        patterns: ['*']
+
+    ignore:
+      # TypeScript is pinned to 6.x on purpose: typescript-eslint@8 declares a peer range of
+      # ">=4.8.4 <6.1.0", so TypeScript 7 loses type-aware linting and fails to install at all.
+      # Unpin this when typescript-eslint ships support, not before. See docs/project-plan.md.
+      - dependency-name: typescript
+        update-types: ['version-update:semver-major']
+
+  - package-ecosystem: github-actions
+    directory: '/'
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Etc/UTC
+    open-pull-requests-limit: 3
+    labels: ['dependencies', 'ci']
+    commit-message:
+      prefix: 'ci(deps)'
+    groups:
+      actions:
+        patterns: ['*']

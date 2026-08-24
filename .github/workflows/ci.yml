@@ -1,0 +1,333 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# A force-push to a pull request must not leave the previous run burning minutes on code that
+# no longer exists.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint-and-typecheck:
+    name: Lint and typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      # 22.13.0 is the `engines.node` floor. Pinning the exact floor here is the only place it
+      # gets exercised at all; the matrix below covers the versions people actually run.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.13.0
+          cache: npm
+
+      - run: npm ci
+
+      # Deliberately outside the test matrix. Typecheck, lint, and format:check are
+      # platform-independent and version-independent, so running them on four more machines
+      # proves the same thing four more times and delays the answer.
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run format:check
+
+  test:
+    name: Test (Node ${{ matrix.node }} / ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        # Windows is a first-class target here, not a courtesy. Two bugs in this project
+        # reproduced only on Windows and were invisible on Linux:
+        #
+        #   - Windows upper-cases environment variable names, so a case-sensitive prefix
+        #     filter in the process service silently matched nothing.
+        #   - A missing executable surfaces as exit code 1 rather than ENOENT, because
+        #     commands route through a shell — so "is this package manager installed?"
+        #     answered wrongly.
+        #
+        # That is what this half of the matrix is paying for.
+        node: ['22', '24']
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm test
+
+      # Built on both platforms rather than only on Linux: tsup writes paths, and
+      # `bin/atlas.js` resolves `dist/cli.js` through a file URL. Both are places a backslash
+      # has leaked through before.
+      - run: npm run build
+
+      - run: node bin/atlas.js --version
+
+  package-managers:
+    name: Install with ${{ matrix.manager }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        manager: [npm, pnpm, yarn]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install pnpm
+        if: matrix.manager == 'pnpm'
+        run: npm install --global pnpm@10
+
+      # Only `package-lock.json` is committed. npm therefore gets a genuinely immutable
+      # install, and pnpm gets one after importing that lockfile. Yarn has no committed
+      # lockfile to be immutable about, so what this job proves for yarn is narrower but still
+      # worth proving: Atlas's dependency tree resolves and its binary runs under yarn's
+      # node_modules layout.
+      - name: Install with npm
+        if: matrix.manager == 'npm'
+        run: npm ci
+
+      - name: Install with pnpm
+        if: matrix.manager == 'pnpm'
+        run: |
+          pnpm import
+          pnpm install --frozen-lockfile
+
+      - name: Install with yarn
+        if: matrix.manager == 'yarn'
+        run: yarn install --non-interactive
+
+      - name: Build and run the binary
+        run: |
+          ${{ matrix.manager }} run build
+          node bin/atlas.js --version
+          node bin/atlas.js list
+
+  templates:
+    name: Templates parse and typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      # Fail with a sentence rather than with a tsc usage error if the Phase 3 template
+      # scaffolding is missing.
+      - name: Check the template gate is wired up
+        shell: bash
+        run: |
+          missing=0
+          for path in scripts/check-generated-output.ts scripts/validate-templates.ts; do
+            if [ ! -f "$path" ]; then
+              echo "Missing $path — the template validation gate cannot run without it."
+              missing=1
+            fi
+          done
+          exit "$missing"
+
+      # Templates are excluded from tsconfig.json because they import packages this repository
+      # does not depend on. This is the config that typechecks them anyway, against the
+      # ambient shims in templates/@types/.
+      - name: Typecheck templates
+        run: npx tsx scripts/check-generated-output.ts
+
+      # Manifest schema, and every __TOKEN__ cross-checked against src/constants/tokens.ts.
+      # A misspelled token is otherwise invisible until a user finds the literal placeholder
+      # in a generated file.
+      - name: Validate template manifests and tokens
+        run: npx tsx scripts/validate-templates.ts
+
+  generated-output:
+    name: Generated output compiles and lints
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    # The expensive gate runs only once the cheap ones agree. Nothing about a generated-output
+    # failure is easier to read than a lint failure, and this job costs an order of magnitude
+    # more minutes.
+    needs: [lint-and-typecheck, templates]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+      # Phase 3 ships exactly one generator, `logger`. Until it exists there is nothing to
+      # generate, and a job that reports success while testing nothing is worse than one that
+      # says out loud that it was skipped.
+      - name: Look for a generator to exercise
+        id: probe
+        shell: bash
+        run: |
+          if [ -f src/generators/logger/logger.generator.ts ] && [ -f templates/logger/template.json ]; then
+            echo 'ready=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'ready=false' >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Report that the gate did not run
+        if: steps.probe.outputs.ready != 'true'
+        shell: bash
+        run: |
+          echo 'SKIPPED: the generated-output gate checked nothing.'
+          echo 'Expected src/generators/logger/logger.generator.ts and templates/logger/template.json.'
+          echo 'This job is green because there is no generator to run, not because generated code compiles.'
+
+      # Packed rather than linked. A tarball install is the only arrangement that exercises
+      # what users actually get: the `files` list, the shipped `templates/` copy, and the bin
+      # symlink. `npm pack` does not run `prepublishOnly`, so `verify` is not repeated here.
+      - name: Pack Atlas
+        if: steps.probe.outputs.ready == 'true'
+        run: npm pack --pack-destination "${{ runner.temp }}"
+
+      - name: Create a scratch Express + TypeScript project
+        if: steps.probe.outputs.ready == 'true'
+        shell: bash
+        run: |
+          project="${{ runner.temp }}/generated-check"
+          mkdir -p "$project/src"
+
+          cat > "$project/package.json" <<'JSON'
+          {
+            "name": "generated-check",
+            "private": true,
+            "version": "0.0.0",
+            "type": "module"
+          }
+          JSON
+
+          # Strict, with the two options that catch the mistakes generated code makes most
+          # often. Anything Atlas writes has to survive them.
+          cat > "$project/tsconfig.json" <<'JSON'
+          {
+            "compilerOptions": {
+              "target": "ES2023",
+              "lib": ["ES2023"],
+              "module": "nodenext",
+              "moduleResolution": "nodenext",
+              "types": ["node"],
+              "strict": true,
+              "noUncheckedIndexedAccess": true,
+              "exactOptionalPropertyTypes": true,
+              "verbatimModuleSyntax": true,
+              "skipLibCheck": true,
+              "noEmit": true
+            },
+            "include": ["src"]
+          }
+          JSON
+
+          # The anchor comments are here on purpose: an injection whose marker is missing is
+          # reported as manual work rather than applied, so a project without them would test
+          # the fallback instead of the real path.
+          cat > "$project/src/app.ts" <<'TS'
+          import express from 'express';
+
+          export const app = express();
+
+          // atlas:middleware
+          // atlas:routes
+          TS
+
+          cat > "$project/src/index.ts" <<'TS'
+          import { app } from './app.js';
+
+          app.listen(3000);
+          TS
+
+          cat > "$project/eslint.config.js" <<'JS'
+          import tseslint from 'typescript-eslint';
+
+          export default tseslint.config(
+            { ignores: ['node_modules/**'] },
+            ...tseslint.configs.recommendedTypeChecked,
+            {
+              languageOptions: {
+                parserOptions: {
+                  projectService: true,
+                  tsconfigRootDir: import.meta.dirname,
+                },
+              },
+            },
+          );
+          JS
+
+      - name: Install the scratch project's dependencies
+        if: steps.probe.outputs.ready == 'true'
+        shell: bash
+        working-directory: ${{ runner.temp }}/generated-check
+        run: |
+          npm install --no-audit --no-fund express@^5
+          npm install --no-audit --no-fund --save-dev \
+            typescript@^6 \
+            @types/node@^26 \
+            @types/express@^5 \
+            eslint@^10 \
+            typescript-eslint@^8
+
+      - name: Install Atlas from the tarball
+        if: steps.probe.outputs.ready == 'true'
+        shell: bash
+        working-directory: ${{ runner.temp }}/generated-check
+        run: |
+          tarball="$(ls "${{ runner.temp }}"/suhel-atlas-*.tgz | head -n 1)"
+          echo "Installing $tarball"
+          npm install --no-audit --no-fund --save-dev "$tarball"
+          npx atlas --version
+
+      - name: Generate
+        if: steps.probe.outputs.ready == 'true'
+        shell: bash
+        working-directory: ${{ runner.temp }}/generated-check
+        run: npx atlas logger --yes
+
+      # The two checks that make "generated code is production-quality" a fact rather than an
+      # intention. Everything else in this repository is an assertion about what Atlas meant
+      # to write; these two read what it actually wrote.
+      - name: Typecheck the generated output
+        if: steps.probe.outputs.ready == 'true'
+        working-directory: ${{ runner.temp }}/generated-check
+        run: npx tsc --noEmit
+
+      - name: Lint the generated output
+        if: steps.probe.outputs.ready == 'true'
+        working-directory: ${{ runner.temp }}/generated-check
+        run: npx eslint src
+
+      # Runs even on failure: the first question about a broken generated-output run is always
+      # "what did it write?", and the scratch project is gone by the time anyone asks.
+      - name: List what was generated
+        if: always() && steps.probe.outputs.ready == 'true'
+        shell: bash
+        working-directory: ${{ runner.temp }}/generated-check
+        run: find src -type f | sort

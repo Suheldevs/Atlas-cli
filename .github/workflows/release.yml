@@ -1,0 +1,108 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*.*.*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to publish, e.g. v0.1.0. Must already exist and match package.json.'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+# Two publishes of the same tag racing each other is not a situation worth recovering from, so
+# in-progress runs are queued rather than cancelled.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      # Required for npm provenance: npm exchanges this token for a signed attestation linking
+      # the published tarball to this workflow, this commit, and this repository.
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.13.0
+          cache: npm
+          # Sets the registry in .npmrc and wires NODE_AUTH_TOKEN into it. Without
+          # registry-url, the token below is never read and the publish fails as anonymous.
+          registry-url: 'https://registry.npmjs.org'
+
+      # A tarball whose version disagrees with the tag that produced it is expensive to unpick
+      # after the fact: npm versions are immutable, so the only remedy is a deprecation and
+      # another release. Checked before anything else runs.
+      - name: Check the tag matches package.json
+        shell: bash
+        run: |
+          tag="${{ github.event.inputs.tag || github.ref_name }}"
+          version="v$(node -p "require('./package.json').version")"
+
+          echo "tag:            $tag"
+          echo "package.json:   $version"
+
+          if [ "$tag" != "$version" ]; then
+            echo "Refusing to publish: the tag and package.json disagree."
+            echo "Bump the version, commit it, then tag the commit that carries it."
+            exit 1
+          fi
+
+      - run: npm ci
+
+      # The full gate, not a subset. Nothing reaches the registry that has not passed the same
+      # checks a pull request has to pass — a release is the worst possible place to discover
+      # that lint was failing.
+      - name: Verify
+        run: npm run verify
+
+      # `verify` does not cover templates, because they are excluded from tsconfig.json and
+      # from ESLint by design. They are shipped verbatim, so they get their own gate here.
+      - name: Typecheck templates
+        run: npx tsx scripts/check-generated-output.ts
+
+      - name: Validate template manifests and tokens
+        run: npx tsx scripts/validate-templates.ts
+
+      # Templates are copied, not bundled, which makes "the templates shipped" a thing that can
+      # silently fail. A published CLI with an empty templates/ directory cannot generate
+      # anything at all.
+      - name: Check the tarball carries dist and templates
+        shell: bash
+        run: |
+          npm pack --dry-run --json > pack.json
+          node --input-type=module -e "
+            import { readFileSync } from 'node:fs';
+            const [pack] = JSON.parse(readFileSync('pack.json', 'utf8'));
+            const files = pack.files.map((file) => file.path);
+            const missing = ['dist/index.js', 'bin/atlas.js'].filter((path) => !files.includes(path));
+            const templates = files.filter((path) => path.startsWith('templates/'));
+            if (missing.length > 0) throw new Error('Tarball is missing: ' + missing.join(', '));
+            if (templates.length === 0) throw new Error('Tarball contains no templates/ files.');
+            console.log('Tarball carries ' + files.length + ' files, ' + templates.length + ' of them templates.');
+          "
+
+      # `--provenance` requires id-token: write above, a public repository, and a
+      # `repository` field in package.json that points at this repository — npm rejects the
+      # attestation if they disagree. The placeholder URL must be replaced before the first
+      # publish.
+      #
+      # `@suhel/atlas` is scoped, and scoped packages default to restricted. `--access public`
+      # is only strictly required for the first publish, but leaving it in is harmless and
+      # means a fresh scope never needs a workflow edit.
+      - name: Publish
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

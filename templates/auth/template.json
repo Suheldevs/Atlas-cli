@@ -1,0 +1,26 @@
+{
+  "name": "auth",
+  "version": "2.0.0",
+  "description": "JWT authentication with refresh-token rotation, reuse detection and role middleware.",
+  "dependencies": {
+    "jsonwebtoken": "^9.0.3",
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "mongoose": "^9.8.0",
+    "@prisma/client": "^6.19.3"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/cookie-parser": "^1.4.10",
+    "prisma": "^6.19.3"
+  },
+  "scripts": {},
+  "files": [],
+  "requires": {
+    "frameworks": ["express"],
+    "language": "typescript",
+    "dependencies": {
+      "express": "^5.0.0"
+    }
+  }
+}

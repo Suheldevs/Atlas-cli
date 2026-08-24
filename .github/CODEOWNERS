@@ -1,0 +1,7 @@
+# Every pull request gets a review request from the owner listed here.
+#
+# REPLACE `@suhel` with the real GitHub username or team before enabling branch protection.
+# CODEOWNERS silently does nothing when the account does not exist — no error, no review request,
+# no warning — so an unreplaced placeholder looks exactly like a working configuration.
+
+* @suhel
