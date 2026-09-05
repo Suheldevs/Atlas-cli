@@ -223,7 +223,7 @@ describe('atlas logger, end to end', () => {
     for (const file of result.files) {
       const contents = await readFile(file.path, 'utf8');
       // The core promise: the project keeps working after Atlas is uninstalled.
-      expect(contents).not.toContain('@suhel/atlas');
+      expect(contents).not.toContain('@mohdsuhel/atlas');
       expect(contents).not.toContain('atlas-cli');
     }
   });

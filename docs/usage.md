@@ -82,7 +82,7 @@ The link is a symlink to this directory, so a rebuild is picked up without re-li
 still a _build_, so `npm run build` after every source change. Undo it with:
 
 ```bash
-npm unlink -g @suhel/atlas
+npm unlink -g @mohdsuhel/atlas
 ```
 
 On Windows, `npm link` needs either Developer Mode enabled or an elevated terminal to create the
@@ -261,7 +261,7 @@ atlas crud Product
 npm install                       # the generator declares deps; this installs them
 npx tsc --noEmit                  # generated code compiles under your tsconfig
 
-npm uninstall -D @suhel/atlas     # or: npm unlink @suhel/atlas
+npm uninstall -D @mohdsuhel/atlas     # or: npm unlink @mohdsuhel/atlas
 npx tsc --noEmit                  # still compiles — nothing imported Atlas
 ```
 
@@ -303,17 +303,17 @@ Nothing about the commands changes. Only how the binary arrives.
 The recommended way, and what the README tells users:
 
 ```bash
-npx @suhel/atlas auth
-npx @suhel/atlas list
+npx @mohdsuhel/atlas auth
+npx @mohdsuhel/atlas list
 ```
 
 Always the latest published version, nothing left on the machine. `npx` caches, so if a fresh release
-does not appear, pin it: `npx @suhel/atlas@0.2.0 auth`.
+does not appear, pin it: `npx @mohdsuhel/atlas@0.2.0 auth`.
 
 ## Install it globally
 
 ```bash
-npm install -g @suhel/atlas
+npm install -g @mohdsuhel/atlas
 
 atlas --version
 atlas doctor
@@ -324,7 +324,7 @@ The binary is `atlas`; `atlas-cli` is installed as an alias for the same file.
 ## Pin it per project (recommended for teams)
 
 ```bash
-npm install -D @suhel/atlas
+npm install -D @mohdsuhel/atlas
 npx atlas auth
 ```
 
@@ -345,9 +345,9 @@ npm run atlas -- crud Invoice
 ## Upgrading
 
 ```bash
-npm view @suhel/atlas versions --json      # what exists
-npm install -D @suhel/atlas@latest         # per project
-npm update -g @suhel/atlas                 # global
+npm view @mohdsuhel/atlas versions --json      # what exists
+npm install -D @mohdsuhel/atlas@latest         # per project
+npm update -g @mohdsuhel/atlas                 # global
 ```
 
 Read `CHANGELOG.md` before upgrading across a minor. A new Atlas version can generate different files
@@ -357,8 +357,8 @@ before it writes.
 ## Removing it
 
 ```bash
-npm uninstall -D @suhel/atlas
-npm uninstall -g @suhel/atlas
+npm uninstall -D @mohdsuhel/atlas
+npm uninstall -g @mohdsuhel/atlas
 ```
 
 Your generated code is unaffected. That is the design, and the check at the end of Part 1 is how you

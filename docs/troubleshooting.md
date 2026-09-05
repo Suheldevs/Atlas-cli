@@ -259,7 +259,7 @@ empty file, which nearly always means a template failed to load. It queued the s
 is a duplicate rather than a conflict to resolve. Or it asked for one package at two different version
 ranges.
 
-**Fix.** There is nothing to configure here. Please report it at <https://github.com/suhel/atlas/issues>
+**Fix.** There is nothing to configure here. Please report it at <https://github.com/Suheldevs/Atlas-cli/issues>
 with the command you ran, the error's detail lines — they name the offending paths or package — and the
 output of `atlas info`. The message names the generator that built the plan, so if it came from a plugin,
 report it to that plugin's author instead. `--dry-run` runs this check too, so the failure reproduces without
@@ -374,7 +374,7 @@ for is skipped silently rather than treated as a failure.
 
 **Fix.** Run with `--verbose` to see prettier's own diagnostic, which names the position it could not parse;
 that diagnostic is the bug report. For a built-in template, please file it at
-<https://github.com/suhel/atlas/issues> with that output. If you are authoring the template, fix the syntax
+<https://github.com/Suheldevs/Atlas-cli/issues> with that output. If you are authoring the template, fix the syntax
 and run again — strict mode exists so the template test suite fails loudly on exactly this, while a real
 user's run is never aborted over cosmetics.
 
@@ -445,7 +445,7 @@ this one means it did not, which makes it a bug.
 something you configured incorrectly.
 
 **Fix.** Re-run with `--verbose` to get the stack trace, then please report it at
-<https://github.com/suhel/atlas/issues> with the trace, the exact command you ran, the output of
+<https://github.com/Suheldevs/Atlas-cli/issues> with the trace, the exact command you ran, the output of
 `atlas doctor`, and your Node version, package manager, and operating system. If you need to keep working
 in the meantime, `--dry-run` will often reveal which part of the plan is at fault. As with every other
 failure, no partial output is left on disk.

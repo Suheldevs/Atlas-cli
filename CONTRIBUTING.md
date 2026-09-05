@@ -10,8 +10,8 @@ exists, and most review comments on a first pull request are answered there.
 ## Setup
 
 ```
-git clone https://github.com/suhel/atlas.git
-cd atlas
+git clone https://github.com/Suheldevs/Atlas-cli.git
+cd Atlas-cli
 npm install
 ```
 

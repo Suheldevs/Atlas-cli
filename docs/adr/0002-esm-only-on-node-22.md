@@ -67,7 +67,7 @@ at run time.
 - Users on Node 20 or earlier cannot run Atlas at all. There is no degraded mode and no fallback build.
   The guard in `bin/atlas.js` rejects them with [ATLAS_1001](../troubleshooting.md#atlas_1001) and an
   explicit upgrade instruction rather than a `SyntaxError`.
-- `require('@suhel/atlas')` is impossible. Acceptable: the programmatic surface in `src/index.ts` exists for
+- `require('@mohdsuhel/atlas')` is impossible. Acceptable: the programmatic surface in `src/index.ts` exists for
   tests and future editor integrations, both of which are ESM.
 - A bundler in the toolchain, so stack traces need source maps to be readable.
 - Externalised dependencies mean the install is not a single file; `node_modules` size is a function of

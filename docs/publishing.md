@@ -19,9 +19,9 @@ Checked against the working tree, so you know exactly what is left to do:
 
 | Thing                          | State                                                               |
 | ------------------------------ | ------------------------------------------------------------------- |
-| Git repository                 | Initialised, **no commits yet**, **no remote configured**           |
-| `repository` in `package.json` | `github.com/suhel/atlas` — a **placeholder**                        |
-| `@suhel/atlas` on npm          | Unpublished (404). The **scope owner is unverified**                |
+| Git repository                 | Initialised, 2 commits on `main`, remote `Suheldevs/Atlas-cli`      |
+| `repository` in `package.json` | `github.com/Suheldevs/Atlas-cli` — set                              |
+| `@mohdsuhel/atlas` on npm      | Unpublished (404). The **scope owner is unverified**                |
 | `NPM_TOKEN` secret             | Not set                                                             |
 | `CHANGELOG.md`                 | Does not exist yet — Changesets writes it on the first version bump |
 | CI and release workflows       | Written and complete, never yet run                                 |
@@ -43,9 +43,9 @@ The rest of this document writes it as `YOUR_USER/atlas`. Substitute yours.
 `package.json` currently points at a repository that does not exist:
 
 ```json
-"homepage": "https://github.com/suhel/atlas#readme",
-"repository": { "type": "git", "url": "git+https://github.com/suhel/atlas.git" },
-"bugs": { "url": "https://github.com/suhel/atlas/issues" }
+"homepage": "https://github.com/Suheldevs/Atlas-cli#readme",
+"repository": { "type": "git", "url": "git+https://github.com/Suheldevs/Atlas-cli.git" },
+"bugs": { "url": "https://github.com/Suheldevs/Atlas-cli/issues" }
 ```
 
 Fix all three before the first publish. `homepage` and `bugs` being wrong is only embarrassing —
@@ -138,17 +138,17 @@ Do this _after_ the first CI run, because GitHub only offers checks it has seen 
 
 This is the one decision that is genuinely hard to reverse, so check it before anything else.
 
-**`@suhel/atlas` is a scoped name, and a scope is not first-come-first-served — it must be your npm
+**`@mohdsuhel/atlas` is a scoped name, and a scope is not first-come-first-served — it must be your npm
 username or an org you belong to.** If your npm username is not `suhel` and you do not own a `suhel`
 org, `npm publish` fails with `E403` no matter how correct everything else is.
 
 Verified against the registry just now:
 
-| Name           | Status                                                                |
-| -------------- | --------------------------------------------------------------------- |
-| `@suhel/atlas` | Unpublished. Usable **only if you own the `suhel` scope**             |
-| `atlas-cli`    | **Taken** — v1.0.2 by someone else. Not available                     |
-| `suhel-cli`    | **Free** — and matches the `npx suhel-cli auth` idea you started from |
+| Name               | Status                                                                |
+| ------------------ | --------------------------------------------------------------------- |
+| `@mohdsuhel/atlas` | Unpublished. Usable **only if you own the `suhel` scope**             |
+| `atlas-cli`        | **Taken** — v1.0.2 by someone else. Not available                     |
+| `suhel-cli`        | **Free** — and matches the `npx suhel-cli auth` idea you started from |
 
 Three ways forward:
 
@@ -177,7 +177,7 @@ npm → your avatar → **Access Tokens** → **Generate New Token** → **Granu
 - Organizations: no access needed.
 
 For the very first publish the package does not exist yet, so scope the token to the **scope**
-(`@suhel/*`) rather than to the package, or the token will have permission to write nothing.
+(`@mohdsuhel/*`) rather than to the package, or the token will have permission to write nothing.
 
 Then on GitHub: Settings → Secrets and variables → Actions → New repository secret, named exactly
 **`NPM_TOKEN`**. The workflow reads it as `NODE_AUTH_TOKEN`; the name in `release.yml` is `NPM_TOKEN`.
@@ -255,12 +255,12 @@ environmental reason and you want to retry the same tag without cutting a new ve
 ## 6. Confirm it worked
 
 ```bash
-npm view @suhel/atlas
-npm view @suhel/atlas dist-tags
+npm view @mohdsuhel/atlas
+npm view @mohdsuhel/atlas dist-tags
 
 cd $(mktemp -d)
-npx --yes @suhel/atlas@0.1.0 --version
-npx --yes @suhel/atlas@0.1.0 list
+npx --yes @mohdsuhel/atlas@0.1.0 --version
+npx --yes @mohdsuhel/atlas@0.1.0 list
 ```
 
 Run that from a directory that is **not** this repository. Running the published package from inside
@@ -293,7 +293,7 @@ npm version 0.2.0-beta.0 --no-git-tag-version
 npm publish --tag beta --access public
 ```
 
-Installed explicitly with `npm i -D @suhel/atlas@beta`. The `latest` tag is untouched. **Never publish
+Installed explicitly with `npm i -D @mohdsuhel/atlas@beta`. The `latest` tag is untouched. **Never publish
 a pre-release without `--tag`** — omitting it moves `latest` to your beta, and every plain
 `npm install` starts serving it.
 
@@ -301,9 +301,9 @@ a pre-release without `--tag`** — omitting it moves `latest` to your beta, and
 
 | Situation                  | What to do                                                                                                         |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| Published a broken version | `npm deprecate @suhel/atlas@0.1.0 "Broken build, use 0.1.1"`, then publish the fix                                 |
+| Published a broken version | `npm deprecate @mohdsuhel/atlas@0.1.0 "Broken build, use 0.1.1"`, then publish the fix                             |
 | Published a secret         | Revoke the secret first. Unpublish second — assume it is already scraped                                           |
-| Need it gone               | `npm unpublish @suhel/atlas@0.1.0` — allowed for **72 hours** only, and the version number is burned forever       |
+| Need it gone               | `npm unpublish @mohdsuhel/atlas@0.1.0` — allowed for **72 hours** only, and the version number is burned forever   |
 | `E403 Forbidden`           | The scope is not yours, or the token lacks write access, or `--access public` is missing on a scoped first publish |
 | `ENEEDAUTH` in CI          | `NPM_TOKEN` is missing, expired, or `registry-url` was removed from the setup-node step                            |
 | Provenance rejected        | `repository` in `package.json` does not match the actual repository, or it is private                              |

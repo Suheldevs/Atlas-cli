@@ -1,12 +1,12 @@
 blank_issues_enabled: false
 contact_links:
   - name: Error code reference
-    url: https://github.com/suhel/atlas/blob/main/docs/troubleshooting.md
+    url: https://github.com/Suheldevs/Atlas-cli/blob/main/docs/troubleshooting.md
     about: >-
       Every ATLAS_nnnn code Atlas can print, what causes it, and how to fix it. Start here if
       Atlas gave you a code — most of them are configuration, not bugs.
   - name: Questions and ideas
-    url: https://github.com/suhel/atlas/discussions
+    url: https://github.com/Suheldevs/Atlas-cli/discussions
     about: >-
       "How do I", "should Atlas do X", and anything you are not sure is a bug yet. Discussions are
       the right place for it; an issue that turns out to be a question just gets converted.

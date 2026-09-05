@@ -2,7 +2,7 @@
 
 A template is the source Atlas writes into somebody's project. It is not a runtime: once a
 template has been generated, the project it landed in has no dependency on Atlas, and nothing
-generated may import from `@suhel/atlas` — ever. Whatever is here is what a user reads, reviews
+generated may import from `@mohdsuhel/atlas` — ever. Whatever is here is what a user reads, reviews
 and maintains, so it is held to the standard of code a senior engineer wrote by hand.
 
 ## Directory contract

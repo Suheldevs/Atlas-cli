@@ -11,7 +11,7 @@ body:
         no runtime to configure. A request that needs Atlas to stay in the loop is out of scope,
         however useful it would be.
 
-        See [docs/architecture.md](https://github.com/suhel/atlas/blob/main/docs/architecture.md)
+        See [docs/architecture.md](https://github.com/Suheldevs/Atlas-cli/blob/main/docs/architecture.md)
         for what that rules in and out.
 
   - type: textarea
@@ -59,7 +59,7 @@ body:
         feature of the architecture rather than a way of saying no: it means you can have it
         today without waiting for us. Built-ins are reserved for things almost every project
         wants. See
-        [docs/plugin-development.md](https://github.com/suhel/atlas/blob/main/docs/plugin-development.md).
+        [docs/plugin-development.md](https://github.com/Suheldevs/Atlas-cli/blob/main/docs/plugin-development.md).
       options:
         - 'Yes — and I would be willing to write it'
         - 'Yes — but I would rather it shipped in the box'

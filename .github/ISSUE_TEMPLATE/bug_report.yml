@@ -7,7 +7,7 @@ body:
     attributes:
       value: |
         If Atlas printed an `ATLAS_nnnn` code, check
-        [docs/troubleshooting.md](https://github.com/suhel/atlas/blob/main/docs/troubleshooting.md)
+        [docs/troubleshooting.md](https://github.com/Suheldevs/Atlas-cli/blob/main/docs/troubleshooting.md)
         first — every code is listed there with its cause and its fix.
 
         **The single most useful thing you can include is the output of `atlas info`.** Most
@@ -84,7 +84,7 @@ body:
       label: The exact command you ran
       description: Verbatim, including every flag. Re-run it with `--verbose` if you can.
       render: shell
-      placeholder: npx @suhel/atlas auth --database prisma --verbose
+      placeholder: npx @mohdsuhel/atlas auth --database prisma --verbose
     validations:
       required: true
 

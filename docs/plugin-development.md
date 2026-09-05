@@ -152,27 +152,27 @@ Complete, and typed against the published interfaces.
     "build": "tsc -p tsconfig.json"
   },
   "peerDependencies": {
-    "@suhel/atlas": "^0.1.0"
+    "@mohdsuhel/atlas": "^0.1.0"
   },
   "devDependencies": {
-    "@suhel/atlas": "^0.1.0",
+    "@mohdsuhel/atlas": "^0.1.0",
     "typescript": "^6.0.3"
   }
 }
 ```
 
-`@suhel/atlas` is a **peer** dependency, not a regular one. A plugin that bundled its own copy of Atlas would
+`@mohdsuhel/atlas` is a **peer** dependency, not a regular one. A plugin that bundled its own copy of Atlas would
 end up with a second `PlanBuilder` class and a second set of error types, and the engine would receive plans
 built by a stranger.
 
 That has one consequence worth planning for: `PlanBuilder` and `UsageError` are runtime imports, so
-`@suhel/atlas` has to be **resolvable from the plugin's own location**. In a project that only ever runs
-`npx @suhel/atlas`, Atlas lives in the npx cache and the plugin's `import` will not find it — the plugin is
+`@mohdsuhel/atlas` has to be **resolvable from the plugin's own location**. In a project that only ever runs
+`npx @mohdsuhel/atlas`, Atlas lives in the npx cache and the plugin's `import` will not find it — the plugin is
 then skipped with an `ATLAS_6001` warning. Tell your users to install Atlas as a devDependency alongside the
 plugin:
 
 ```
-npm install --save-dev @suhel/atlas atlas-plugin-request-id
+npm install --save-dev @mohdsuhel/atlas atlas-plugin-request-id
 ```
 
 **`tsconfig.json`**
@@ -211,7 +211,7 @@ import {
   type Generator,
   type GeneratorContext,
   type GeneratorInvocation,
-} from '@suhel/atlas';
+} from '@mohdsuhel/atlas';
 
 // `extends Record<string, unknown>` is load-bearing, not decoration. `AtlasPlugin.generators`
 // is `readonly AnyGenerator[]`, which is `Generator<Record<string, unknown>>`, and `prompt`
@@ -345,7 +345,7 @@ users' files: add new names freely, never re-spell a shipped one.
 
 File contents are produced by the plugin, not loaded through `context.templates`. That renderer resolves
 template names against **Atlas's own** shipped `templates/` directory, so it can only load templates that ship
-inside `@suhel/atlas`. A plugin that wants its files as separate assets rather than as inline strings ships
+inside `@mohdsuhel/atlas`. A plugin that wants its files as separate assets rather than as inline strings ships
 them in its own package and reads them itself — the shape of the plan is identical either way, because the
 engine only ever sees contents.
 
@@ -368,7 +368,7 @@ A path to a directory resolves to `index.js` inside it. Run `tsc --watch` in the
 **2. A file dependency.** Closer to reality, because discovery now happens by name rather than by path:
 
 ```
-npm install --save-dev @suhel/atlas file:../atlas-plugin-request-id
+npm install --save-dev @mohdsuhel/atlas file:../atlas-plugin-request-id
 ```
 
 The package name matches `atlas-plugin-*`, so it is picked up from the dependency list with no config at all

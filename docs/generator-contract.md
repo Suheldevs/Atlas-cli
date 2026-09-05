@@ -240,7 +240,7 @@ import {
   type Generator,
   type GeneratorContext,
   type GeneratorInvocation,
-} from '@suhel/atlas';
+} from '@mohdsuhel/atlas';
 
 // `extends Record<string, unknown>` is required, not stylistic: see the note on GeneratorMeta above.
 interface HealthOptions extends Record<string, unknown> {

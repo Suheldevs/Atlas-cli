@@ -9,9 +9,9 @@
 /** The binary users type. Not the same as the npm package name. */
 export const CLI_NAME = 'atlas';
 
-export const PACKAGE_NAME = '@suhel/atlas';
+export const PACKAGE_NAME = '@mohdsuhel/atlas';
 
-export const REPOSITORY_URL = 'https://github.com/suhel/atlas';
+export const REPOSITORY_URL = 'https://github.com/Suheldevs/Atlas-cli';
 
 export const ISSUES_URL = `${REPOSITORY_URL}/issues`;
 

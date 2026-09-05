@@ -1,5 +1,5 @@
 {
-  "name": "@suhel/atlas",
+  "name": "@mohdsuhel/atlas",
   "version": "0.1.0",
   "description": "Generate production-grade TypeScript modules straight into your project. Your code stays yours — no runtime dependency, ever.",
   "keywords": [
@@ -19,13 +19,13 @@
   ],
   "license": "MIT",
   "author": "Suhel <abhay@quippy.co>",
-  "homepage": "https://github.com/suhel/atlas#readme",
+  "homepage": "https://github.com/Suheldevs/Atlas-cli#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/suhel/atlas.git"
+    "url": "git+https://github.com/Suheldevs/Atlas-cli.git"
   },
   "bugs": {
-    "url": "https://github.com/suhel/atlas/issues"
+    "url": "https://github.com/Suheldevs/Atlas-cli/issues"
   },
   "type": "module",
   "engines": {

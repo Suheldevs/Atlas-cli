@@ -255,7 +255,7 @@ JavaScript. Five variations of the same ESM + Prisma app would all pass while mo
 stayed unproven.
 
 Publish `0.1.0` early rather than at the end. `0.x` means unstable by definition, it secures the name,
-it resolves the `@suhel` scope question while that is still cheap, and it makes the release pipeline
+it resolves the `@mohdsuhel` scope question while that is still cheap, and it makes the release pipeline
 fail at a moment when failing is free. See [publishing.md](./publishing.md).
 
 ---
@@ -305,7 +305,7 @@ admin-only route as a `user` and confirm the 403, refresh, reuse a rotated refre
 family is revoked, and run the CRUD endpoints with pagination and search. Finally:
 
 ```bash
-npm unlink @suhel/atlas && npx tsc --noEmit   # still compiles with Atlas gone
+npm unlink @mohdsuhel/atlas && npx tsc --noEmit   # still compiles with Atlas gone
 ```
 
 That last command is the one that matters. Every other check can pass while Atlas has quietly leaked a

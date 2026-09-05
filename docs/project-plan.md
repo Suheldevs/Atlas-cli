@@ -20,7 +20,7 @@ resolution, and dependency reconciliation.
 
 | Decision              | Choice                                                                                                                                                           |
 | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| npm package           | `@suhel/atlas` (`atlas-cli` is taken on npm — v1.0.2 exists). Binary: `atlas`                                                                                    |
+| npm package           | `@mohdsuhel/atlas` (`atlas-cli` is taken on npm — v1.0.2 exists). Binary: `atlas`                                                                                |
 | Module format         | ESM-only, Node ≥ 22.13 (Node 20 is EOL; `@inquirer/prompts@8` sets the floor)                                                                                    |
 | Build                 | `tsup` (esbuild) bundle → `dist/`; templates copied verbatim, never bundled                                                                                      |
 | Templates location    | Repo **root** `templates/`, not `src/` — they are assets, excluded from `tsconfig.json`                                                                          |

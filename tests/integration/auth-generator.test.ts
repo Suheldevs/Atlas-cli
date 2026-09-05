@@ -255,7 +255,7 @@ describe('atlas auth, end to end', () => {
 
     for (const file of result.files) {
       const contents = await readFile(file.path, 'utf8');
-      expect(contents).not.toContain('@suhel/atlas');
+      expect(contents).not.toContain('@mohdsuhel/atlas');
     }
   });
 

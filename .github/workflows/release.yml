@@ -96,10 +96,10 @@ jobs:
 
       # `--provenance` requires id-token: write above, a public repository, and a
       # `repository` field in package.json that points at this repository — npm rejects the
-      # attestation if they disagree. The placeholder URL must be replaced before the first
-      # publish.
+      # attestation if they disagree. package.json now points at Suheldevs/Atlas-cli, so this
+      # holds as long as the repository stays public.
       #
-      # `@suhel/atlas` is scoped, and scoped packages default to restricted. `--access public`
+      # `@mohdsuhel/atlas` is scoped, and scoped packages default to restricted. `--access public`
       # is only strictly required for the first publish, but leaving it in is harmless and
       # means a fresh scope never needs a workflow edit.
       - name: Publish

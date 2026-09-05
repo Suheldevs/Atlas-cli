@@ -286,7 +286,7 @@ other tool.
   lands.
 - **Never import Atlas.** Not the package, not a type from it, not a helper. The one constraint the whole
   project is built around is that deleting Atlas changes nothing about the generated application. A single
-  `import type { … } from '@suhel/atlas'` breaks it.
+  `import type { … } from '@mohdsuhel/atlas'` breaks it.
 - **`strict`-clean, including `exactOptionalPropertyTypes` and `noUncheckedIndexedAccess`.** Assume the
   strictest reasonable configuration, because the projects most likely to adopt a code generator already have
   it. `noUncheckedIndexedAccess` in particular makes every array index and every record lookup

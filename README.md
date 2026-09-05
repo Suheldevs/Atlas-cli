@@ -2,15 +2,13 @@
 
 Generate production-grade TypeScript modules directly into your project.
 
-<!-- The repository URLs below (https://github.com/suhel/atlas) are placeholders and must be updated before publishing. -->
-
 ## What it does
 
 Atlas is a code generator. You run one command, and it writes real TypeScript source files into your
 existing project.
 
 ```
-npx @suhel/atlas auth
+npx @mohdsuhel/atlas auth
 ```
 
 Before:
@@ -70,19 +68,19 @@ Schematics, and `prisma init`. It is **not a runtime library**.
 No install is needed. The recommended way to run Atlas is on demand:
 
 ```
-npx @suhel/atlas <command>
+npx @mohdsuhel/atlas <command>
 ```
 
 If you would rather have it on your PATH:
 
 ```
-npm install -g @suhel/atlas
+npm install -g @mohdsuhel/atlas
 ```
 
 Or pin it per project as a dev dependency, so everyone on the team generates with the same version:
 
 ```
-npm install -D @suhel/atlas
+npm install -D @mohdsuhel/atlas
 ```
 
 The binary is `atlas`. `atlas-cli` is installed as an alias for it.
@@ -104,9 +102,9 @@ Run `atlas list` inside a project and it names any unmet requirement rather than
 ## Usage
 
 ```
-npx @suhel/atlas list           # what applies to this project, and why the rest does not
-npx @suhel/atlas auth           # or: atlas add auth
-npx @suhel/atlas crud Product
+npx @mohdsuhel/atlas list           # what applies to this project, and why the rest does not
+npx @mohdsuhel/atlas auth           # or: atlas add auth
+npx @mohdsuhel/atlas crud Product
 ```
 
 Every generator takes `--dir <path>`; `auth` also takes `--hashing` and `--database`, and `prisma`
@@ -124,7 +122,7 @@ Reports whether the current environment can run Atlas. It checks:
 - whether the working directory is writable
 
 ```
-$ npx @suhel/atlas doctor
+$ npx @mohdsuhel/atlas doctor
 
 Atlas 0.1.0
 
@@ -183,8 +181,8 @@ there is nobody to ask, so Atlas picks **backup and replace**: the only choice t
 ## Development
 
 ```
-git clone https://github.com/suhel/atlas.git
-cd atlas
+git clone https://github.com/Suheldevs/Atlas-cli.git
+cd Atlas-cli
 npm install
 ```
 
@@ -222,4 +220,3 @@ and the alternatives considered.
 ## License
 
 MIT — see [LICENSE](LICENSE).
-# Atlas-cli
