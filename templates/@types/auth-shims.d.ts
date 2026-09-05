@@ -1,6 +1,6 @@
 /**
- * Ambient declarations for the three packages `templates/auth` declares but this repository does
- * not install: `argon2` compiles a native module, and `mongoose` and `@prisma/client` are large and
+ * Ambient declarations for the packages the templates declare but this repository does not
+ * install: `argon2` compiles a native module, and `mongoose` and `@prisma/client` are large and
  * would need `prisma generate` to be meaningful.
  *
  * Everything else the auth template imports — jose, zod, express, cookie-parser — is a real
@@ -97,11 +97,44 @@ declare module 'mongoose' {
     deleteMany(filter: Record<string, unknown>): Query<DeleteResult>;
   }
 
+  /**
+   * Only the options `templates/server-base-*` actually passes. Real `ConnectOptions` is far
+   * wider; a narrower model can only produce a false failure, never a false pass.
+   */
+  export interface ConnectOptions {
+    /** False makes a query fail immediately while disconnected instead of queueing forever. */
+    readonly bufferCommands?: boolean;
+    readonly serverSelectionTimeoutMS?: number;
+    readonly socketTimeoutMS?: number;
+    readonly maxPoolSize?: number;
+    readonly minPoolSize?: number;
+    readonly autoIndex?: boolean;
+  }
+
+  /**
+   * The single connection Mongoose keeps per process. `on` is modelled as literal overloads
+   * rather than a generic `(event: string, listener: (...args: unknown[]) => void)`, because a
+   * method-syntax signature over `unknown[]` is bivariant and would accept any listener at all.
+   */
+  export interface Connection {
+    readonly host: string;
+    readonly name: string;
+    readonly readyState: number;
+    on(event: 'error', listener: (error: Error) => void): this;
+    on(event: 'connected' | 'disconnected' | 'reconnected', listener: () => void): this;
+    close(): Promise<void>;
+  }
+
   interface Mongoose {
     /** Typed as `unknown` so a template has to narrow it, which is what the real guard does. */
     readonly models: Record<string, unknown>;
     model<TDocument>(name: string, schema: Schema<TDocument>): Model<TDocument>;
     readonly Types: typeof Types;
+    readonly connection: Connection;
+    /** Only the one setting the templates change; the real signature takes any option name. */
+    set(key: 'strictQuery', value: boolean): void;
+    connect(uri: string, options?: ConnectOptions): Promise<Mongoose>;
+    disconnect(): Promise<void>;
   }
 
   const mongoose: Mongoose;

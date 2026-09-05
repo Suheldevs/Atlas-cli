@@ -1,0 +1,26 @@
+{
+  "name": "client-react-js",
+  "version": "1.0.0",
+  "description": "Vite + React (JavaScript) client wired to the auth API: in-memory access token, httpOnly refresh cookie, single-retry 401 refresh, envelope-aware axios layer, guarded routes and a themed sign-in, sign-up and dashboard.",
+  "dependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router-dom": "^7.18.3",
+    "axios": "^1.20.0"
+  },
+  "devDependencies": {
+    "vite": "^7.3.6",
+    "@vitejs/plugin-react": "^5.2.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "files": [],
+  "requires": {
+    "frameworks": [],
+    "language": "javascript",
+    "dependencies": {}
+  }
+}

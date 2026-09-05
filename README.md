@@ -1,14 +1,49 @@
 # Atlas
 
-Generate production-grade TypeScript modules directly into your project.
+[![npm](https://img.shields.io/npm/v/@mohdsuhel/atlas)](https://www.npmjs.com/package/@mohdsuhel/atlas)
+
+Start a full-stack project, or generate production-grade modules into one you already have.
+
+```
+npm install -g @mohdsuhel/atlas
+```
+
+The package is [`@mohdsuhel/atlas`](https://www.npmjs.com/package/@mohdsuhel/atlas). The command it
+installs is `atlas`. You can also run it without installing anything:
+
+```
+npx @mohdsuhel/atlas start my-app
+```
 
 ## What it does
 
-Atlas is a code generator. You run one command, and it writes real TypeScript source files into your
-existing project.
+Atlas does two things.
+
+**Start a new project.** From an empty directory, `atlas start` writes a working Express + Mongoose
+API and a Vite + React client, in JavaScript or TypeScript, with authentication already wired
+between them:
 
 ```
-npx @mohdsuhel/atlas auth
+$ atlas start my-app
+
+my-app/
+  server/     Express 5 + Mongoose — auth, CRUD, uploads, logging
+  client/     Vite + React — login, signup, protected routes
+```
+
+```
+cd my-app/server && npm install && npm run dev
+cd my-app/client && npm install && npm run dev
+```
+
+Open the client, sign up, and you are logged into your own API. See [`atlas start`](#atlas-start) for
+what it generates and why.
+
+**Add a module to a project you already have.** `atlas add` writes real source files into an existing
+codebase:
+
+```
+$ atlas add auth
 ```
 
 Before:
@@ -35,9 +70,9 @@ src/
       require-auth.ts
 ```
 
-Those are ordinary files that you own, read, review, and edit. Nothing in them imports Atlas. Once
-the command finishes, your project has zero dependency on Atlas — you can uninstall it and the
-generated code keeps working exactly as it did.
+Either way, those are ordinary files that you own, read, review, and edit. Nothing in them imports
+Atlas. Once the command finishes, your project has zero dependency on Atlas — you can uninstall it
+and the generated code keeps working exactly as it did.
 
 ## Why it works this way
 
@@ -87,13 +122,13 @@ The binary is `atlas`. `atlas-cli` is installed as an alias for it.
 
 ## Status
 
-Atlas is pre-1.0 but complete: seven generators ship, and the generated output is verified by compiling
-it against real packages under `strict`, not by asserting on strings. **Not yet published to npm** — see
-[docs/usage.md](docs/usage.md) for running it locally in the meantime.
+Atlas is pre-1.0 but complete: seven generators and `atlas start` ship, across fifteen templates whose
+generated output is verified by compiling it against real packages under `strict`, not by asserting on
+strings. Published to npm as [`@mohdsuhel/atlas`](https://www.npmjs.com/package/@mohdsuhel/atlas).
 
 | Command                            | Requires             |
 | ---------------------------------- | -------------------- |
-| `doctor`, `info`, `list`           | Nothing              |
+| `start`, `doctor`, `info`, `list`  | Nothing              |
 | `auth`, `crud`, `socket`, `upload` | Express + TypeScript |
 | `logger`, `prisma`, `redis`        | TypeScript           |
 
@@ -102,15 +137,93 @@ Run `atlas list` inside a project and it names any unmet requirement rather than
 ## Usage
 
 ```
-npx @mohdsuhel/atlas list           # what applies to this project, and why the rest does not
-npx @mohdsuhel/atlas auth           # or: atlas add auth
-npx @mohdsuhel/atlas crud Product
+atlas start my-app          # create a new full-stack project
+atlas list                  # what applies to this project, and why the rest does not
+atlas add auth              # or the shortcut: atlas auth
+atlas crud Product          # a CRUD resource for one entity
+atlas doctor                # check this machine can run Atlas
 ```
 
 Every generator takes `--dir <path>`; `auth` also takes `--hashing` and `--database`, and `prisma`
-takes `--provider`. `atlas <generator> --help` is the reference for each.
+takes `--provider`. `atlas <command> --help` is the reference for each.
 
-[docs/usage.md](docs/usage.md) covers all seven in detail, along with what to do after each one writes.
+[docs/usage.md](docs/usage.md) covers all seven generators in detail, along with what to do after each
+one writes.
+
+### `atlas start`
+
+Every other command generates _into_ a project that already exists. `start` is the one that creates
+one, for when you have nothing but an empty directory.
+
+```
+npx @mohdsuhel/atlas start my-app
+```
+
+It asks whether you want JavaScript or TypeScript — or takes `--language <js|ts>` — and writes two
+independent packages:
+
+```
+my-app/
+  server/                Express 5 + Mongoose
+    src/
+      auth/              signup, login, me, refresh rotation, logout
+      item/              a CRUD resource to copy
+      upload/            multer with a size limit and MIME allowlist
+      logger/            winston, JSON in production
+      config/            env validation, database connection
+      middleware/        error handler, 404
+      utils/             ApiError, ApiResponse, asyncHandler
+    .env.example
+    package.json
+  client/                Vite + React
+    src/
+      pages/             Login, Signup, Dashboard
+      context/           auth provider
+      routes/            protected and public-only routes
+      lib/               axios client
+    package.json
+```
+
+There is no root `package.json` on purpose: the two halves are separate packages, so either can move
+to its own repository later without unpicking a workspace.
+
+```
+cd my-app/server && npm install && npm run dev
+cd my-app/client && npm install && npm run dev
+```
+
+Auth works on the first run — the login page talks to your own API, with the access token held in a
+module variable and the refresh token in an httpOnly cookie.
+
+Every endpoint answers through one envelope, so the client never special-cases a route:
+
+```js
+res.api(200, 'Fetched', items, { page, limit, total });
+// -> { statusCode, success, message, data, meta, timestamp }
+
+throw new ApiError(404, 'Item not found');
+// -> { success: false, statusCode, message, errors, timestamp }
+```
+
+The error handler translates Mongoose `CastError`, `ValidationError` and duplicate-key `11000` into
+real status codes rather than letting them surface as a 500, and never returns an internal message
+to the client.
+
+Configuration is validated before the server binds a port: every missing or malformed variable is
+reported at once rather than one restart at a time, and a `JWT_ACCESS_SECRET` still set to the
+`.env.example` placeholder is rejected outright.
+
+The TypeScript path reuses the same `auth`, `crud`, `upload` and `logger` templates the `add`
+commands use, so both languages are held to the compile gate.
+
+| Flag                  | Effect                                            |
+| --------------------- | ------------------------------------------------- |
+| `--language <js\|ts>` | Skip the prompt                                   |
+| `--skip-install`      | Write the project without installing dependencies |
+| `--skip-git`          | Do not initialise a repository                    |
+
+`new` and `create` are aliases. `--dry-run` reports the whole tree without writing anything, and a
+run that fails or is interrupted rolls the directory back rather than leaving half a project.
 
 ### `atlas doctor`
 
@@ -124,14 +237,14 @@ Reports whether the current environment can run Atlas. It checks:
 ```
 $ npx @mohdsuhel/atlas doctor
 
-Atlas 0.1.0
+ℹ Inspecting environment
+Environment
+✔ Node.js           v22.14.0
+✔ Package managers  npm 10.9.2
+✔ Git               git version 2.47.1
+✔ Workspace         /home/you/projects/api (writable)
 
-  ok    Node.js            v22.14.0 (requires >= 22.13.0)
-  ok    Package manager    npm 10.9.2 (also found: pnpm 9.15.4)
-  ok    git                git version 2.47.1
-  ok    Working directory  /home/you/projects/api is writable
-
-  4 checks passed, 0 warnings, 0 failed.
+✔ Everything looks good.
 ```
 
 ### Global flags

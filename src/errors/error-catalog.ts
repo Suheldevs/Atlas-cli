@@ -16,10 +16,16 @@ export const ErrorCode = {
   CommandFailed: 'ATLAS_1005',
   ExecutableNotFound: 'ATLAS_1006',
   EnvironmentUnhealthy: 'ATLAS_1007',
+  DiskFull: 'ATLAS_1008',
+  ReadOnlyFilesystem: 'ATLAS_1009',
+  PathTooLong: 'ATLAS_1010',
   InvalidUsage: 'ATLAS_2001',
   NotAProject: 'ATLAS_2002',
   UnsupportedFramework: 'ATLAS_2003',
   UnknownGenerator: 'ATLAS_2004',
+  InvalidProjectName: 'ATLAS_2005',
+  TargetNotEmpty: 'ATLAS_2006',
+  TargetNotADirectory: 'ATLAS_2007',
   GenerationFailed: 'ATLAS_3001',
   ConflictUnresolved: 'ATLAS_3002',
   PlanInvalid: 'ATLAS_3003',
@@ -73,6 +79,18 @@ const DESCRIPTORS: Readonly<Record<ErrorCode, ErrorDescriptor>> = {
     exitCode: ExitCode.PreconditionFailed,
     summary: 'Environment preflight checks failed',
   },
+  [ErrorCode.DiskFull]: {
+    exitCode: ExitCode.PreconditionFailed,
+    summary: 'No space left on the target device',
+  },
+  [ErrorCode.ReadOnlyFilesystem]: {
+    exitCode: ExitCode.PreconditionFailed,
+    summary: 'Target filesystem is mounted read-only',
+  },
+  [ErrorCode.PathTooLong]: {
+    exitCode: ExitCode.PreconditionFailed,
+    summary: 'Generated path exceeds the filesystem limit',
+  },
   [ErrorCode.InvalidUsage]: {
     exitCode: ExitCode.InvalidUsage,
     summary: 'Invalid command usage',
@@ -88,6 +106,18 @@ const DESCRIPTORS: Readonly<Record<ErrorCode, ErrorDescriptor>> = {
   [ErrorCode.UnknownGenerator]: {
     exitCode: ExitCode.InvalidUsage,
     summary: 'Unknown generator',
+  },
+  [ErrorCode.InvalidProjectName]: {
+    exitCode: ExitCode.InvalidUsage,
+    summary: 'Project name is not usable as a directory and a package name',
+  },
+  [ErrorCode.TargetNotEmpty]: {
+    exitCode: ExitCode.PreconditionFailed,
+    summary: 'Target directory already contains files',
+  },
+  [ErrorCode.TargetNotADirectory]: {
+    exitCode: ExitCode.PreconditionFailed,
+    summary: 'Target path exists and is not a directory',
   },
   [ErrorCode.GenerationFailed]: {
     exitCode: ExitCode.Failure,

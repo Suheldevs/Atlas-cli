@@ -1,0 +1,29 @@
+{
+  "name": "client-react-ts",
+  "version": "1.0.0",
+  "description": "Vite + React client in strict TypeScript, wired to the auth API: in-memory access token, httpOnly refresh cookie, single-retry 401 refresh, typed envelope-aware axios layer, guarded routes and a themed sign-in, sign-up and dashboard.",
+  "dependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router-dom": "^7.18.3",
+    "axios": "^1.20.0"
+  },
+  "devDependencies": {
+    "vite": "^7.3.6",
+    "@vitejs/plugin-react": "^5.2.0",
+    "typescript": "^6.0.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "files": [],
+  "requires": {
+    "frameworks": [],
+    "language": "typescript",
+    "dependencies": {}
+  }
+}

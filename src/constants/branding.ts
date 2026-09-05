@@ -30,7 +30,7 @@ export const DOCS_BASE_URL = `${REPOSITORY_URL}/blob/main/docs`;
  * runtime *before* importing anything from `dist/`, so it cannot read them from here.
  * Change both together.
  */
-export const MINIMUM_NODE_VERSION = { major: 22, minor: 12, patch: 0 } as const;
+export const MINIMUM_NODE_VERSION = { major: 22, minor: 13, patch: 0 } as const;
 
 export const SUPPORTED_NODE_RANGE = `>=${String(MINIMUM_NODE_VERSION.major)}.${String(
   MINIMUM_NODE_VERSION.minor,

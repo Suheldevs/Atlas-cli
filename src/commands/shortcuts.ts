@@ -6,7 +6,19 @@ import { createGeneratorCommand } from './generator-command.js';
 import type { CommandContext } from './register-commands.js';
 
 /** Command names a generator must never shadow. */
-const RESERVED = new Set(['add', 'new', 'list', 'ls', 'info', 'doctor', 'help', 'generate', 'g']);
+const RESERVED = new Set([
+  'add',
+  'start',
+  'new',
+  'create',
+  'list',
+  'ls',
+  'info',
+  'doctor',
+  'help',
+  'generate',
+  'g',
+]);
 
 /**
  * Registers `atlas <generator>` as a top-level alias of `atlas add <generator>`.

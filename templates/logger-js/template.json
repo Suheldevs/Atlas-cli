@@ -1,0 +1,16 @@
+{
+  "name": "logger-js",
+  "version": "1.0.0",
+  "description": "Production Winston logging for JavaScript (ESM): JSON to stdout in production, colourised lines in development, silent under test, recursive redaction of sensitive fields, error and cause-chain serialisation, and Express request middleware.",
+  "dependencies": {
+    "winston": "^3.19.0"
+  },
+  "devDependencies": {},
+  "scripts": {},
+  "files": [],
+  "requires": {
+    "frameworks": ["express"],
+    "language": "javascript",
+    "dependencies": {}
+  }
+}

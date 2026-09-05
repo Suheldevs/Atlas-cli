@@ -1,0 +1,75 @@
+{
+  "name": "server-base-ts",
+  "version": "1.0.0",
+  "description": "The base of an Express 5 + Mongoose API server in TypeScript on Node ESM: boot-time environment validation, a single response envelope, a central error handler that translates Mongoose and JWT failures, and graceful shutdown.",
+  "dependencies": {
+    "express": "^5.2.1",
+    "mongoose": "^9.8.0",
+    "cors": "^2.8.6",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.2.5"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3",
+    "tsx": "^4.23.1",
+    "@types/node": "^26.1.1",
+    "@types/express": "^5.0.6",
+    "@types/cors": "^2.8.19",
+    "@types/cookie-parser": "^1.4.10"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "files": [
+    { "source": "src/app.ts", "destination": "src/app.ts", "format": true },
+    { "source": "src/server.ts", "destination": "src/server.ts", "format": true },
+    { "source": "src/config/env.ts", "destination": "src/config/env.ts", "format": true },
+    { "source": "src/config/db.ts", "destination": "src/config/db.ts", "format": true },
+    {
+      "source": "src/middleware/error-handler.ts",
+      "destination": "src/middleware/error-handler.ts",
+      "format": true
+    },
+    {
+      "source": "src/middleware/not-found.ts",
+      "destination": "src/middleware/not-found.ts",
+      "format": true
+    },
+    { "source": "src/routes/index.ts", "destination": "src/routes/index.ts", "format": true },
+    {
+      "source": "src/routes/health.routes.ts",
+      "destination": "src/routes/health.routes.ts",
+      "format": true
+    },
+    {
+      "source": "src/utils/api-error.ts",
+      "destination": "src/utils/api-error.ts",
+      "format": true
+    },
+    {
+      "source": "src/utils/api-response.ts",
+      "destination": "src/utils/api-response.ts",
+      "format": true
+    },
+    {
+      "source": "src/utils/async-handler.ts",
+      "destination": "src/utils/async-handler.ts",
+      "format": true
+    },
+    {
+      "source": "src/utils/capitalize-words.ts",
+      "destination": "src/utils/capitalize-words.ts",
+      "format": true
+    },
+    { "source": "env.example", "destination": ".env.example", "format": false },
+    { "source": "gitignore", "destination": ".gitignore", "format": false },
+    { "source": "README.md", "destination": "README.md", "format": true }
+  ],
+  "requires": {
+    "frameworks": ["express"],
+    "language": "typescript",
+    "dependencies": {}
+  }
+}

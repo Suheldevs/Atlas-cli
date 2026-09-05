@@ -1,0 +1,18 @@
+{
+  "name": "crud-js",
+  "version": "1.0.0",
+  "description": "A CRUD resource for Express 5 and JavaScript (ESM): a Mongoose model with timestamps and indexes, hand-written validators with no schema library, a service with bounded pagination, sorting and search, and a controller answering through the shared ApiError and res.api envelope.",
+  "dependencies": {
+    "mongoose": "^9.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {},
+  "files": [],
+  "requires": {
+    "frameworks": ["express"],
+    "language": "javascript",
+    "dependencies": {
+      "express": "^5.0.0"
+    }
+  }
+}

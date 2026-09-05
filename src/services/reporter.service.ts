@@ -42,6 +42,13 @@ interface SymbolSet {
   readonly info: string;
   readonly bullet: string;
   readonly arrow: string;
+  readonly mark: string;
+  /** Tree drawing: a child with siblings below it, the last child, and the two spacers. */
+  readonly treeBranch: string;
+  readonly treeLast: string;
+  readonly treeGuide: string;
+  readonly treeGap: string;
+  readonly ellipsis: string;
 }
 
 const UNICODE_SYMBOLS: SymbolSet = {
@@ -51,6 +58,12 @@ const UNICODE_SYMBOLS: SymbolSet = {
   info: 'ℹ',
   bullet: '•',
   arrow: '→',
+  mark: '◆',
+  treeBranch: '├── ',
+  treeLast: '└── ',
+  treeGuide: '│   ',
+  treeGap: '    ',
+  ellipsis: '…',
 };
 
 const ASCII_SYMBOLS: SymbolSet = {
@@ -60,7 +73,23 @@ const ASCII_SYMBOLS: SymbolSet = {
   info: 'i',
   bullet: '-',
   arrow: '>',
+  mark: '*',
+  treeBranch: '|-- ',
+  treeLast: '`-- ',
+  treeGuide: '|   ',
+  treeGap: '    ',
+  ellipsis: '...',
 };
+
+export interface TreeOptions {
+  /** Children drawn per directory before the remainder is summarised. Defaults to 12. */
+  readonly maxChildren?: number;
+}
+
+/** One directory level while a tree is being assembled. Leaves simply have no children. */
+interface TreeNode {
+  readonly children: Map<string, TreeNode>;
+}
 
 const noop = (): void => {
   /* nothing to do without a spinner to drive */
@@ -201,6 +230,142 @@ export class Reporter {
     }).start();
     this.#activeTask = spinner;
     return this.#spinnerHandle(spinner);
+  }
+
+  /**
+   * Stops whatever spinner is running, if any.
+   *
+   * Exists for the paths that leave in a hurry — a signal handler, a top-level failure — where
+   * the spinner is still animating and, more importantly, ora is still holding the terminal
+   * cursor hidden. Safe to call when nothing is running.
+   */
+  stopTask(): void {
+    this.#activeTask?.stop();
+    this.#activeTask = undefined;
+  }
+
+  /**
+   * One task in a sequence of known length, prefixed `[2/5]`.
+   *
+   * The counter is re-applied to every later message rather than written once, because ora
+   * redraws the whole line on `succeed` — without this the counter would vanish exactly when
+   * the line becomes permanent, leaving a finished transcript that no longer says where it got
+   * to.
+   */
+  step(index: number, total: number, text: string): TaskHandle {
+    const prefix = this.#chalk.dim(`[${String(index)}/${String(total)}]`);
+    const handle = this.task(`${prefix} ${text}`);
+    const decorate = (message?: string): string | undefined =>
+      message === undefined ? undefined : `${prefix} ${message}`;
+
+    return {
+      update: (message: string): void => {
+        handle.update(`${prefix} ${message}`);
+      },
+      succeed: (message?: string): void => {
+        handle.succeed(decorate(message));
+      },
+      warn: (message?: string): void => {
+        handle.warn(decorate(message));
+      },
+      fail: (message?: string): void => {
+        handle.fail(decorate(message));
+      },
+      stop: (): void => {
+        handle.stop();
+      },
+    };
+  }
+
+  /**
+   * Masthead for a long-running command.
+   *
+   * Kept to two lines on purpose: a banner earns its space by telling the user which version of
+   * Atlas is about to write to their disk, and stops earning it the moment it becomes ASCII art
+   * they scroll past.
+   */
+  banner(title: string, subtitle?: string): void {
+    this.blank();
+    this.#write(this.#stdout, `${this.#chalk.cyan(this.#symbols.mark)} ${this.#chalk.bold(title)}`);
+
+    if (subtitle !== undefined) {
+      this.#write(this.#stdout, this.#chalk.dim(`  ${subtitle}`));
+    }
+
+    this.blank();
+  }
+
+  /**
+   * A command the user is meant to type, set apart from the prose around it.
+   *
+   * The `$` is dimmed and the command is not, so a copy-paste that grabs the whole line is
+   * still visibly wrong rather than silently broken.
+   */
+  command(text: string): void {
+    this.#write(this.#stdout, `    ${this.#chalk.dim('$')} ${this.#chalk.cyan(text)}`);
+  }
+
+  /**
+   * Draws `paths` as a directory tree under `label`.
+   *
+   * Paths arrive flat because that is what a generation result contains; the nesting is
+   * reconstructed here so that callers never have to. Wide directories are truncated rather
+   * than printed in full — a scaffold writes upwards of fifty files, and a summary the user has
+   * to scroll is a summary they will not read.
+   */
+  tree(label: string, paths: readonly string[], options: TreeOptions = {}): void {
+    const maxChildren = options.maxChildren ?? 12;
+    const root: TreeNode = { children: new Map() };
+
+    for (const path of paths) {
+      let node = root;
+      for (const segment of path.split(/[/\\]/u).filter((part) => part !== '')) {
+        let child = node.children.get(segment);
+        if (child === undefined) {
+          child = { children: new Map() };
+          node.children.set(segment, child);
+        }
+        node = child;
+      }
+    }
+
+    this.#write(this.#stdout, this.#chalk.bold(label));
+    this.#writeTreeLevel(root, '', maxChildren);
+  }
+
+  #writeTreeLevel(node: TreeNode, indent: string, maxChildren: number): void {
+    // Directories first, then files, each alphabetical — the ordering every file browser uses,
+    // and the one that makes a generated layout comparable between runs.
+    const entries = [...node.children.entries()].sort(([leftName, left], [rightName, right]) => {
+      const leftIsDirectory = left.children.size > 0;
+      const rightIsDirectory = right.children.size > 0;
+      if (leftIsDirectory !== rightIsDirectory) return leftIsDirectory ? -1 : 1;
+      return leftName.localeCompare(rightName);
+    });
+
+    const shown = entries.slice(0, maxChildren);
+    const hidden = entries.length - shown.length;
+
+    for (const [index, entry] of shown.entries()) {
+      const [name, child] = entry;
+      const isLast = index === shown.length - 1 && hidden === 0;
+      const connector = isLast ? this.#symbols.treeLast : this.#symbols.treeBranch;
+      const isDirectory = child.children.size > 0;
+      const rendered = isDirectory ? this.#chalk.bold(`${name}/`) : name;
+
+      this.#write(this.#stdout, `${indent}${this.#chalk.dim(connector)}${rendered}`);
+
+      if (isDirectory) {
+        const guide = isLast ? this.#symbols.treeGap : this.#symbols.treeGuide;
+        this.#writeTreeLevel(child, `${indent}${this.#chalk.dim(guide)}`, maxChildren);
+      }
+    }
+
+    if (hidden > 0) {
+      const connector = this.#chalk.dim(this.#symbols.treeLast);
+      const summary = `${this.#symbols.ellipsis} ${String(hidden)} more`;
+      this.#write(this.#stdout, `${indent}${connector}${this.#chalk.dim(summary)}`);
+    }
   }
 
   // Diagnostics (warn/error/debug) go to stderr so stdout stays clean enough to pipe.

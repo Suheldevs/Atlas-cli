@@ -138,6 +138,57 @@ environment problem into an obvious failure at the top of the log rather than a 
 
 **Exit code:** 3
 
+### ATLAS_1008
+
+The disk filled up while Atlas was writing a project. Everything that had been written was removed, so the
+target directory is not left half-populated.
+
+**Cause.** No space left on the device holding the target directory. A scaffolded project is small, but
+`npm install` into it is not, and a device that was already close to full frequently crosses the line
+during generation rather than before it. On Linux the device can also be out of inodes rather than bytes,
+which reports the same errno.
+
+**Fix.** Free space and run the same command again — nothing was kept, so a re-run starts clean. Check with
+`df -h .` for bytes and `df -i .` for inodes on Linux. Common culprits are stale `node_modules` directories
+(`find . -name node_modules -maxdepth 4 -type d` and remove the ones you no longer need), package-manager
+caches (`npm cache clean --force`, `pnpm store prune`), and Docker images. If the target sits on a small
+partition, pass `--cwd` to scaffold somewhere with room.
+
+**Exit code:** 3
+
+### ATLAS_1009
+
+The target directory is on a filesystem mounted read-only, so no amount of permission changing will make
+the write succeed.
+
+**Cause.** A read-only mount — a container image layer, a squashfs or ISO mount, a network share exported
+read-only, or a Linux root filesystem remounted read-only after a disk error. This is distinct from
+ATLAS_1004: the permissions may be perfectly correct and the write still cannot happen.
+
+**Fix.** Scaffold somewhere writable with `--cwd <path>`, or remount the filesystem read-write
+(`mount -o remount,rw <mountpoint>`). Inside a container, write into a mounted volume rather than the image
+filesystem. If the root filesystem went read-only unexpectedly, check `dmesg` — that usually means a disk
+error, and generating a project is not the problem to solve first.
+
+**Exit code:** 3
+
+### ATLAS_1010
+
+A path Atlas needed to write is longer than the filesystem allows.
+
+**Cause.** The combination of the directory Atlas was run in, the project name, and a nested template path
+exceeded the platform limit — 255 bytes per path segment on most Linux filesystems, and a 260-character
+total path on Windows unless long-path support is enabled. Deeply nested working directories and very long
+project names are the usual contributors, and encrypted-home setups on Linux lower the per-segment limit
+further.
+
+**Fix.** Use a shorter project name, or scaffold nearer the root of the drive with `--cwd`. On Windows,
+enable long paths (`git config --system core.longpaths true` for Git, and the
+`HKLM\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled` registry value for the filesystem
+itself), then run the command again.
+
+**Exit code:** 3
+
 ### ATLAS_2001
 
 The command line could not be interpreted: an unknown command or flag, a missing required argument, too
@@ -207,6 +258,58 @@ are running in, and re-read the earlier output for a `Skipped plugin` warning �
 When Atlas suggests a name, the suggestion is always a real registered generator.
 
 **Exit code:** 2
+
+### ATLAS_2005
+
+The name given to `atlas start` cannot be used as both a directory name and an npm package name. The
+message names the specific rule that was broken rather than saying only that the name is invalid.
+
+**Cause.** One of: the name is empty or whitespace only; it is an absolute path; it contains a path
+separator or a `..` segment; it starts with `.` or `_`, which npm forbids; it contains uppercase letters,
+which npm package names cannot; it is a reserved Windows device name (`con`, `prn`, `aux`, `nul`, `com1`
+through `com9`, `lpt1` through `lpt9`, with or without an extension); it is longer than 214 characters; or
+it contains characters outside letters, digits, dots, dashes and underscores.
+
+Windows device names are rejected on every platform, not only Windows. A `con/` directory created on Linux
+cannot be checked out on Windows at all, and that failure lands on someone else, later, with no message
+explaining it.
+
+**Fix.** Use a lower-case name made of letters, digits, dashes and underscores — `my-app` is the canonical
+shape. `atlas start` always creates its directory inside the current one; to scaffold elsewhere, pass
+`--cwd <path>` rather than putting a path in the name.
+
+**Exit code:** 2
+
+### ATLAS_2006
+
+The directory `atlas start` was asked to create already exists and contains files. Atlas will not merge a
+generated project into it, and does not offer to.
+
+**Cause.** The name is already taken by a previous run or by unrelated work. `start` writes upwards of
+fifty files across two package roots, and there is no safe answer to "what should happen to the `src/` you
+already had" — so an occupied target is refused outright rather than resolved file by file the way
+`atlas add` resolves conflicts.
+
+An empty directory is accepted, and `.git`, `.DS_Store` and `Thumbs.db` do not count as contents: an
+initialised but empty repository is not somebody's work, and nobody deliberately put a `.DS_Store` there.
+The error lists the first few entries it actually found, so you can see what you nearly wrote over.
+
+**Fix.** Pick a different name, move the existing directory aside, or delete it if you no longer want it.
+To add modules to a project that already exists, that is what `atlas add` is for.
+
+**Exit code:** 3
+
+### ATLAS_2007
+
+The path `atlas start` was asked to create already exists as a file rather than a directory.
+
+**Cause.** A file with the same name sits in the working directory — often a stray archive, a lockfile, or
+a note saved under the name you wanted for the project.
+
+**Fix.** Rename or remove the file, or choose a different project name. Atlas never deletes an existing
+path to make room for generated output.
+
+**Exit code:** 3
 
 ### ATLAS_3001
 

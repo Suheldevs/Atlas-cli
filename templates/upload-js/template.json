@@ -1,0 +1,18 @@
+{
+  "name": "upload-js",
+  "version": "1.0.0",
+  "description": "Multer file uploads to disk for JavaScript (ESM): a size limit, a MIME allowlist, generated filenames, and multer failures translated into the application's ApiError rather than leaking to the client.",
+  "dependencies": {
+    "multer": "^2.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {},
+  "files": [],
+  "requires": {
+    "frameworks": ["express"],
+    "language": "javascript",
+    "dependencies": {
+      "express": "^5.0.0"
+    }
+  }
+}

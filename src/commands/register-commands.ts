@@ -15,6 +15,7 @@ import { registerDoctorCommand } from './doctor.command.js';
 import { registerInfoCommand } from './info.command.js';
 import { registerListCommand } from './list.command.js';
 import { registerShortcuts } from './shortcuts.js';
+import { registerStartCommand } from './start.command.js';
 
 /**
  * Everything a command is allowed to reach for.
@@ -52,6 +53,7 @@ export function registerCommands(
   registerDoctorCommand(program, context);
   registerInfoCommand(program, context);
   registerListCommand(program, context, registry);
+  registerStartCommand(program, context);
   registerAddCommand(program, context, registry);
 
   // Registered last so a generator shortcut cannot shadow a built-in command that was

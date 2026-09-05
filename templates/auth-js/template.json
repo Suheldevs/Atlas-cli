@@ -1,0 +1,21 @@
+{
+  "name": "auth-js",
+  "version": "1.0.0",
+  "description": "JavaScript (ESM) JWT authentication for Express and Mongoose: refresh-token rotation with family-wide reuse detection, bcrypt hashing, hand-written validators, and role middleware.",
+  "dependencies": {
+    "jsonwebtoken": "^9.0.3",
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "mongoose": "^9.8.0"
+  },
+  "devDependencies": {},
+  "scripts": {},
+  "files": [],
+  "requires": {
+    "frameworks": ["express"],
+    "language": "javascript",
+    "dependencies": {
+      "express": "^5.0.0"
+    }
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "name": "server-base-js",
+  "version": "1.0.0",
+  "description": "The base of an Express 5 + Mongoose API server in modern Node ESM JavaScript: boot-time environment validation, a single response envelope, a central error handler that translates Mongoose and JWT failures, and graceful shutdown.",
+  "dependencies": {
+    "express": "^5.2.1",
+    "mongoose": "^9.8.0",
+    "cors": "^2.8.6",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.2.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js"
+  },
+  "files": [
+    { "source": "src/app.js", "destination": "src/app.js", "format": true },
+    { "source": "src/server.js", "destination": "src/server.js", "format": true },
+    { "source": "src/config/env.js", "destination": "src/config/env.js", "format": true },
+    { "source": "src/config/db.js", "destination": "src/config/db.js", "format": true },
+    {
+      "source": "src/middleware/error-handler.js",
+      "destination": "src/middleware/error-handler.js",
+      "format": true
+    },
+    {
+      "source": "src/middleware/not-found.js",
+      "destination": "src/middleware/not-found.js",
+      "format": true
+    },
+    { "source": "src/routes/index.js", "destination": "src/routes/index.js", "format": true },
+    {
+      "source": "src/routes/health.routes.js",
+      "destination": "src/routes/health.routes.js",
+      "format": true
+    },
+    {
+      "source": "src/utils/api-error.js",
+      "destination": "src/utils/api-error.js",
+      "format": true
+    },
+    {
+      "source": "src/utils/api-response.js",
+      "destination": "src/utils/api-response.js",
+      "format": true
+    },
+    {
+      "source": "src/utils/async-handler.js",
+      "destination": "src/utils/async-handler.js",
+      "format": true
+    },
+    {
+      "source": "src/utils/capitalize-words.js",
+      "destination": "src/utils/capitalize-words.js",
+      "format": true
+    },
+    { "source": "env.example", "destination": ".env.example", "format": false },
+    { "source": "gitignore", "destination": ".gitignore", "format": false },
+    { "source": "README.md", "destination": "README.md", "format": true }
+  ],
+  "requires": {
+    "frameworks": ["express"],
+    "language": "javascript",
+    "dependencies": {}
+  }
+}
